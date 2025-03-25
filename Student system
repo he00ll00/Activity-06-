@@ -1,0 +1,214 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+// variabless
+struct Student {
+    string id;
+    string firstName;
+    string lastName;
+    string course;
+    float gpa;
+};
+
+// Total students
+const int MAX_STUDENTS = 100;
+Student students[MAX_STUDENTS];
+int studentCount = 0;
+
+// Functions
+void displayMenu();
+void addStudent();
+void editStudent();
+void deleteStudent();
+void viewStudents();
+void clearScreen();
+
+int main() {
+    int choice;
+ 
+ //Menu display   
+    do {
+        displayMenu();
+        cin >> choice;
+        
+        switch(choice) {
+            case 1: addStudent(); break;
+            case 2: editStudent(); break;
+            case 3: deleteStudent(); break;
+            case 4: viewStudents(); break;
+            case 5: cout << "Exiting program...\n"; break;
+            default: cout << "Invalid choice!\n";
+        }
+    } while(choice != 5);
+    
+    return 0;
+}
+
+void displayMenu() {
+    cout << "\n--Menu--\n";
+    cout << "[1] Add Student\n";
+    cout << "[2] Edit Student\n";
+    cout << "[3] Delete Student\n";
+    cout << "[4] View Students\n";
+    cout << "[5] Exit\n";
+    cout << "Enter your choice: ";
+}
+
+// Adding students
+void addStudent() {
+    if(studentCount >= MAX_STUDENTS) {
+        cout << "Maximum number of students reached!\n";
+        return;
+    }
+    
+    Student newStudent;
+    
+    cout << "Enter Student ID: ";
+    cin >> newStudent.id;
+    
+// Check for duplicate ID
+    for(int i = 0; i < studentCount; i++) {
+        if(students[i].id == newStudent.id) {
+            cout << "Error: Student ID already exists!\n";
+            return;
+        }
+    }
+// Student info    
+    cout << "Enter First Name: ";
+    cin >> newStudent.firstName;
+    
+    cout << "Enter Last Name: ";
+    cin >> newStudent.lastName;
+    
+    cout << "Enter Course: ";
+    cin.ignore();
+    getline(cin, newStudent.course);
+    
+    cout << "Enter Previous Semestral GPA: ";
+    cin >> newStudent.gpa;
+    
+    students[studentCount] = newStudent;
+    studentCount++;
+    
+    cout << "Student added successfully!\n";
+}
+// Editing existing student info
+void editStudent() {
+    if(studentCount == 0) {
+        cout << "No students to edit!\n";
+        return;
+    }
+    
+    string searchId;
+    cout << "Enter Student ID to edit: ";
+    cin >> searchId;
+    
+    for(int i = 0; i < studentCount; i++) {
+        if(students[i].id == searchId) {
+            cout << "Editing student " << students[i].firstName << " " << students[i].lastName << endl;
+            
+            cout << "New First Name: ";
+            cin >> students[i].firstName;
+            
+            cout << "New Last Name: ";
+            cin >> students[i].lastName;
+            
+            cout << "New Course: ";
+            cin.ignore();
+            getline(cin, students[i].course);
+            
+            cout << "New GPA: ";
+            cin >> students[i].gpa;
+            
+            cout << "Student updated successfully!\n";
+            return;
+        }
+    }
+    
+    cout << "Student not found!\n";
+}
+// Deleting students
+void deleteStudent() {
+    if(studentCount == 0) {
+        cout << "No students to delete!\n";
+        return;
+    }
+    
+    string searchId;
+    cout << "Enter Student ID to delete: ";
+    cin >> searchId;
+    
+    for(int i = 0; i < studentCount; i++) {
+        if(students[i].id == searchId) {
+            // Shift all elements after this one left
+            for(int j = i; j < studentCount - 1; j++) {
+                students[j] = students[j + 1];
+            }
+            studentCount--;
+            cout << "Student deleted successfully!\n";
+            return;
+        }
+    }
+    
+    cout << "Student not found!\n";
+}
+// Viewing Students
+void viewStudents() {
+    if(studentCount == 0) {
+        cout << "No students to display!\n";
+        return;
+    }
+    
+    int choice;
+    cout << "\nView Options:\n";
+    cout << "1. View All Students\n";
+    cout << "2. Sort by GPA (Ascending)\n";
+    cout << "3. Sort Alphabetically\n";
+    cout << "Enter your choice: ";
+    cin >> choice;
+    
+    
+    Student temp[MAX_STUDENTS];
+    for(int i = 0; i < studentCount; i++) {
+        temp[i] = students[i];
+    }
+    
+    if(choice == 2) { // Sort by GPA
+        for(int i = 0; i < studentCount - 1; i++) {
+            for(int j = 0; j < studentCount - i - 1; j++) {
+                if(temp[j].gpa > temp[j + 1].gpa) {
+                    swap(temp[j], temp[j + 1]);
+                }
+            }
+        }
+    }
+    else if(choice == 3) { // alphabetical by last name
+        for(int i = 0; i < studentCount - 1; i++) {
+            for(int j = 0; j < studentCount - i - 1; j++) {
+                if(temp[j].lastName > temp[j + 1].lastName) {
+                    swap(temp[j], temp[j + 1]);
+                }
+            }
+        }
+    }
+    
+// Display students( asked for chatgpt on how to display:[)
+    cout << "\nStudent List:\n";
+    cout << "ID\tName\t\tCourse\t\tGPA\n";
+    cout << "----------------------------------------\n";
+    for(int i = 0; i < studentCount; i++) {
+        cout << temp[i].id << "\t" 
+             << temp[i].lastName << ", " << temp[i].firstName << "\t"
+             << temp[i].course << "\t"
+             << temp[i].gpa << endl;
+    }
+}
+// Cleaning
+void clearScreen() {
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+}
